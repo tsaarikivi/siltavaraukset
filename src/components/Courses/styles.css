@@ -1,0 +1,9 @@
+.course-day {
+  width: 100%;
+  max-width: 280px;
+  display: inline-block;
+  margin: 5px;
+  box-sizing: border-box;
+  text-align: left;
+  vertical-align: top;
+}

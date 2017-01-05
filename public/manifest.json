@@ -1,0 +1,27 @@
+{
+	"name": "Joogakoulu Silta Varaukset",
+	"short_name": "Joogakoulu Silta",
+	"description": "Joogakoulu Sillan Varausohjelma",
+	"icons": [
+		{
+			"src": "favicon-144x144.png",
+			"sizes": "144x144",
+			"type": "image/png"
+		},
+		{
+			"src": "android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"background_color": "#FEFEFE",
+	"theme_color": "#03A9F4",
+	"display": "standalone",
+	"orientation": "portrait",
+	"start_url": "."
+}
