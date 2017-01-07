@@ -14,7 +14,7 @@ injectTapEventPlugin()
 
 // create redux store
 import reducers from './reducers'
-const store = createStore(reducers, applyMiddleware(thunk));
+export const store = createStore(reducers, applyMiddleware(thunk));
 
 // setup app and router
 import routes from './routes'

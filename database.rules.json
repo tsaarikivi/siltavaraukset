@@ -1,5 +1,10 @@
 {
   "rules": {
+    "courses": {
+      ".indexOn": [
+        "start"
+      ]
+    },
     ".read": true,
     ".write": true
   }

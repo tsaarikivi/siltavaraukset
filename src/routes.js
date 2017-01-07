@@ -5,7 +5,8 @@ import { Route, IndexRoute } from 'react-router'
 import Admin from './components/Admin'
 import Courses from './components/Courses'
 import Feedback from './components/Feedback'
-import Shop from './components/Shop'
+import Login from './components/Login'
+import NotFound from './components/NotFound'
 import User from './components/User'
 
 import App from './Mui'
@@ -15,7 +16,8 @@ export default (
     <IndexRoute component={Courses} />
     <Route path="admin" component={Admin} />
     <Route path="feedback" component={Feedback} />
-    <Route path="shop" component={Shop} />
+    <Route path="login" component={Login} />
     <Route path="user" component={User} />
+    <Route path="*" component={NotFound} />
   </Route>
 )
