@@ -39,7 +39,7 @@ function _getUser(uid, dispatch) {
     data => _onValueChange(data, dispatch),
     err => {
       console.error(err)
-      setSnackbar({ message: 'Käyttäjän tietoja ei voitu hakea. Kirjaudu uudelleen!' }, dispatch)
+      setSnackbar({ message: 'Käyttäjän tietoja ei voitu hakea' }, dispatch)
       setTimeout(() => signOut(), 4000)
     })
 }
@@ -63,7 +63,12 @@ export function register({email, password}) {
   auth.createUserWithEmailAndPassword(email, password)
     .then(user => {
       // then push additional data to users database
-      usersRef.child(user.uid).set({ email })
+      usersRef.child(user.uid).set({
+        email,
+        uses: 0,
+        expires: 0,
+        time: 0
+      })
         .then(() => {
           browserHistory.push('/')
         })

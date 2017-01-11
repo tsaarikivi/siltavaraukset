@@ -15,8 +15,6 @@ import Auth from '../Auth'
 
 import { closeSnackbar } from '../../actions/snackbar'
 
-import './styles.css'
-
 class Layout extends Component {
   constructor(props) {
     super(props)

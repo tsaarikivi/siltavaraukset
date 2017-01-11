@@ -104,7 +104,7 @@ export default class Course extends Component {
   undoReservation() {
     this.handleRequestClose()
     const { course, user } = this.props
-    undoReservation({ course, user })
+    undoReservation({ course, userId: user.uid })
   }
 
   // renders course menu reserve row
@@ -115,6 +115,7 @@ export default class Course extends Component {
     else if (inPast) btn = null
     else if (reserved && starting) btn = null
     else if (reserved) btn = <MenuItem onTouchTap={() => this.undoReservation()} primaryText="Peruuta Varaus" />
+    else if (starting) btn = <MenuItem onTouchTap={() => this.makeReservation()} primaryText="Varaa (ei peruutusta)" />
     else if (!full && !cancelled) btn = <MenuItem onTouchTap={() => this.makeReservation()} primaryText="Varaa" />
     return btn
   }

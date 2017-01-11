@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 
 import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -10,9 +9,7 @@ import Divider from 'material-ui/Divider'
 
 import { signIn } from '../../actions/auth'
 
-import './styles.css'
-
-class Login extends Component {
+export default class Login extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -36,9 +33,9 @@ class Login extends Component {
   render() {
     const { email, password } = this.state
     return <div className="small-container">
+      <Subheader className="subheader-centered">Kirjaudu tai rekisteröidy</Subheader>
       <Paper className="form" zDepth={1}>
         <form onSubmit={e => this.handleSubmit(e)}>
-          <Subheader className="subheader-centered">Kirjaudu tai rekisteröidy</Subheader>
           <Divider />
           <div className="input-container">
             <div className="info-container">
@@ -70,8 +67,8 @@ class Login extends Component {
           </div>
         </form>
       </Paper>
+      <Subheader className="subheader-centered form">Käyttöehdot</Subheader>
       <Paper className="form" zDepth={1}>
-        <Subheader className="subheader-centered">Käyttöehdot</Subheader>
         <Divider />
         <div className="input-container">
           <div className="info-container padded-bottom">
@@ -86,9 +83,3 @@ class Login extends Component {
     </div>
   }
 }
-
-function mapStateToProps({ user }) {
-  return { user }
-}
-
-export default connect(mapStateToProps, null)(Login)

@@ -6,6 +6,7 @@ import reservations from './reservations'
 import shopitems from './shopitems'
 import snackbar from './snackbar'
 import user from './user'
+import users from './users'
 
 // combine all reducers to one single store
 const reducers = combineReducers({
@@ -14,7 +15,8 @@ const reducers = combineReducers({
   reservations,
   shopitems,
   snackbar,
-  user
+  user,
+  users
 })
 
 export default reducers;

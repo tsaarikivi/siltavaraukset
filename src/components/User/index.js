@@ -3,20 +3,25 @@ import { connect } from 'react-redux'
 
 import Subheader from 'material-ui/Subheader'
 import Paper from 'material-ui/Paper'
-import Divider from 'material-ui/Divider'
 import List, { ListItem } from 'material-ui/List'
+
+import { getAmtDaysFromMs } from '../../actions/time'
 
 class User extends Component {
   render() {
     const { user } = this.props
     if (user) {
+      let { uses, expires, time, email } = user
+      expires = getAmtDaysFromMs(expires)
+      time = getAmtDaysFromMs(time)
       return <div className="small-container">
-        <Paper zDepth={1}>
+        <Subheader className="subheader-centered">Käyttäjätiedot</Subheader>
+        <Paper className="form" zDepth={1}>
           <List>
-            <Subheader>Käyttäjätiedot</Subheader>
-            <Divider />
             {this.renderAdmin()}
-            <ListItem>Sähköposti: {user.email}</ListItem>
+            <ListItem>Sähköposti: {email}</ListItem>
+            <ListItem>Kertalippuja {uses} (umpeutuu {expires} pv. päästä)</ListItem>
+            <ListItem>Aikaa {time} päivää</ListItem>
           </List>
         </Paper>
       </div>

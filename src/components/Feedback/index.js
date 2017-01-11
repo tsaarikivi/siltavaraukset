@@ -1,18 +1,14 @@
 import React from 'react'
 import Subheader from 'material-ui/Subheader'
 import Paper from 'material-ui/Paper'
-import Divider from 'material-ui/Divider'
 import List, { ListItem } from 'material-ui/List'
 // import FeedbackForm from './FeedbackForm' <FeedbackForm />
 
-import './styles.css'
-
 const Feedback = () => {
   return <div className="small-container">
-    <Paper zDepth={1}>
+    <Subheader className="subheader-centered">Yhteystiedot</Subheader>
+    <Paper zDepth={1} className="form">
       <List>
-        <Subheader>Yhteystiedot</Subheader>
-        <Divider />
         <ListItem>Tallbergin puistotie 7A, 00200 Helsinki</ListItem>
         <ListItem>Tuula Heiskanen & Hanna Lampen</ListItem>
         <ListItem>joogakoulusilta@gmail.com</ListItem>

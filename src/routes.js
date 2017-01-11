@@ -1,23 +1,39 @@
 import React from 'react'
 import { Route, IndexRoute } from 'react-router'
 
-// Views
-import Admin from './components/Admin'
-import Courses from './components/Courses'
-import Feedback from './components/Feedback'
-import Login from './components/Login'
-import NotFound from './components/NotFound'
-import User from './components/User'
-
 import App from './Mui'
 
 export default (
   <Route path="/" component={App}>
-    <IndexRoute component={Courses} />
-    <Route path="admin" component={Admin} />
-    <Route path="feedback" component={Feedback} />
-    <Route path="login" component={Login} />
-    <Route path="user" component={User} />
-    <Route path="*" component={NotFound} />
+    <IndexRoute getComponent={(location, cb) => {
+      require.ensure([], require => {
+        cb(null, require('./components/Courses').default)
+      }, 'courses')
+    } } />
+    <Route path="/admin" getComponent={(location, cb) => {
+      require.ensure([], require => {
+        cb(null, require('./components/Admin').default)
+      }, 'admin')
+    } } />
+    <Route path="/feedback" getComponent={(location, cb) => {
+      require.ensure([], require => {
+        cb(null, require('./components/Feedback').default)
+      }, 'feedback')
+    } } />
+    <Route path="/login" getComponent={(location, cb) => {
+      require.ensure([], require => {
+        cb(null, require('./components/Login').default)
+      }, 'login')
+    } } />
+    <Route path="/user" getComponent={(location, cb) => {
+      require.ensure([], require => {
+        cb(null, require('./components/User').default)
+      }, 'user')
+    } } />
+    <Route path="*" getComponent={(location, cb) => {
+      require.ensure([], require => {
+        cb(null, require('./components/NotFound').default)
+      }, 'notfound')
+    } } />
   </Route>
 )

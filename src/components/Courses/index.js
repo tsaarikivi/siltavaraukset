@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { fetchCourseData } from '../../actions/courses'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -9,9 +8,7 @@ import Paper from 'material-ui/Paper'
 import { List } from 'material-ui/List'
 import Course from './Course'
 
-import { coursesRefOff } from '../../actions/courses'
-
-import './styles.css'
+import { fetchCourseData, coursesRefOff, getUserMin, getUserMax } from '../../actions/courses'
 
 class Courses extends Component {
   constructor(props) {
@@ -26,7 +23,14 @@ class Courses extends Component {
   }
 
   componentDidMount() {
-    this.props.actions.fetchCourseData()
+    this.props.actions.fetchCourseData(getUserMin, getUserMax)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // if user state changes must sell action again
+    if (this.props.user !== nextProps.user) {
+      this.props.actions.fetchCourseData(getUserMin, getUserMax)
+    }
   }
 
   componentWillUnmount() {
@@ -64,7 +68,7 @@ class Courses extends Component {
         autoScrollBodyContent={true}
         >
         <p><span className="text-black">Opettaja</span><br />{teacher}</p>
-        <p><span className="text-black">Tunnin kuvaus</span><br />{desc}</p>
+        <p><span className="text-black">Tunnin kuvaus</span><br /><span className="pre-wrap">{desc}</span></p>
         {this.renderReservations()}
       </Dialog>
       <Subheader className="subheader-centered">Aikataulu</Subheader>

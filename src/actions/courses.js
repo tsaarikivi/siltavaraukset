@@ -1,43 +1,90 @@
 import { coursesRef, usersRef } from '../firebase'
 
+import { setSnackbar } from './snackbar'
 import { store } from '../index.js'
+
+import {
+  getStart, getEnd, getMsFromDateAndTime,
+  getClock, getLocaleDateStr, getWeekday,
+  checkStarting, checkInPast
+} from './time'
 
 export const types = {
   FETCH_COURSES: 'FETCH_COURSES'
 }
 
+export const getStartingBuffer = 3
+export const getUserMin = 0
+export const getUserMax = 12
+export const getAdminMin = -3
+export const getAdminMax = 50
+
+export function createCourse({title, desc, teacher, startTime, endTime, date, maxCapacity}) {
+  const dispatch = store.dispatch
+  // craft start end and time
+  const start = getMsFromDateAndTime(date, startTime)
+  const end = getMsFromDateAndTime(date, endTime)
+  const time = getClock(startTime) + ' - ' + getClock(endTime)
+  // push to database
+  coursesRef.push({
+    title, desc, teacher,
+    start, end, time,
+    maxCapacity
+  })
+    .then(() => {
+      setSnackbar({ message: 'Tunti luotu' }, dispatch)
+    })
+    .catch(err => {
+      console.error(err)
+      setSnackbar({ message: 'Tuntia EI voitu luoda' }, dispatch)
+    })
+}
+
 export function makeReservation({course: { uid, maxCapacity, start }, user}) {
+  const dispatch = store.dispatch
   coursesRef.child(uid).child('reservations').transaction(
     function (reservations) {
       // if empty make fit
       if (!reservations) {
         reservations = {}
       }
-      // if user fits and has capacity, make reservation
+      // if user fits and has capacity and is not already there, make reservation
       if (Object.keys(reservations).length < maxCapacity) {
         if (_hasCapacity(user, start)) {
-          reservations[user.uid] = user.email
-          _reduceUserCapacity(user.uid, start)
+          if (!reservations[user.uid]) {
+            reservations[user.uid] = user.email
+            setSnackbar({ message: 'Paikka varattu' }, dispatch)
+            _reduceUserCapacity(user.uid, start)
+          } else {
+            setSnackbar({ message: 'Sinulle on jo varattu paikka' }, dispatch)
+          }
+        } else {
+          setSnackbar({ message: 'Ei varauskapasiteettia' }, dispatch)
         }
+      } else {
+        setSnackbar({ message: 'Ei tilaa' }, dispatch)
       }
       return reservations
     }
-  ).catch(err => console.error(err))
+  )
+    .catch(err => console.error(err))
 }
 
 function _hasCapacity(user, start) {
   return _hasTime(user, start) || _hasUses(user, start)
 }
 
-export function undoReservation({course, user}) {
-  const { uid, start } = course
-  const userId = user.uid
+export function undoReservation({course: {uid, start}, userId}, silent = false) {
+  const dispatch = store.dispatch
   coursesRef.child(uid).child('reservations').child(userId).transaction(
     function (data) {
       return null
     }
   )
     .then(() => {
+      if (!silent) {
+        setSnackbar({ message: 'Varaus Peruttu' }, dispatch)
+      }
       _incrementUserCapacity(userId, start)
     })
     .catch(err => console.error(err))
@@ -81,46 +128,41 @@ function _hasUses({uses, expires}, start) {
   return uses > 0 && expires >= start
 }
 
-export function fetchCourseData() {
+export function fetchCourseData(min, max) {
+  const start = getStart(min)
+  const end = getEnd(max)
   return dispatch => {
-    // get courses
-    const start = _getStart()
-    const end = _getEnd()
     // ref off first
     coursesRefOff()
     coursesRef
       .orderByChild('start')
       .startAt(start).endAt(end)
       .on('value',
-      data => _onValueChange(data, dispatch),
+      data => _onValueChange(data, dispatch, min, max),
       err => console.error(err))
   }
 }
 
 export function coursesRefOff() {
   coursesRef.off('value', _onValueChange)
+  // TODO .then() errors
 }
 
-function _onValueChange(data, dispatch) {
+function _onValueChange(data, dispatch, min, max) {
   // set courses object in start order
-  let courses = _initCourses()
+  let courses = _initCourses(min, max)
   data.forEach(course => {
     // craft course with needed view values
-    courses = _putCourse(courses, course)
+    const c = course.val()
+    const uid = course.key
+    const timeStr = getLocaleDateStr(c.start)
+    courses[timeStr].courses[uid] = _craftCourse(c, uid)
   })
   // dispatch action with courses payload
   dispatch({
     type: types.FETCH_COURSES,
     payload: courses
   })
-}
-
-function _putCourse(courses, course) {
-  const c = course.val()
-  const uid = course.key
-  const timeStr = _getTimeStr(c.start)
-  courses[timeStr].courses[uid] = _craftCourse(c, uid)
-  return courses
 }
 
 function _craftCourse(course, uid) {
@@ -139,83 +181,91 @@ function _craftCourse(course, uid) {
     course.reserved = course.reservations[user.uid]
   }
   // set starting
-  course.starting = _checkStarting(course.start)
+  course.starting = checkStarting(course.start)
   // set course inPast
-  course.inPast = _checkInPast(course.start)
+  course.inPast = checkInPast(course.end)
 
   return course
 }
 
-function _initCourses() {
+function _initCourses(min, max) {
   const courses = {}
-  for (let i = 0; i < 12; i++) {
+  for (let i = min; i < max; i++) {
     let obj = _getTimeObjWithBuffer(i)
     courses[obj.timeStr] = { weekday: obj.weekday, courses: {} }
   }
   return courses
 }
 
-function _getTimeStr(ms) {
-  const time = new Date(ms)
-  return time.toLocaleDateString()
-}
-
 function _getTimeObjWithBuffer(buf) {
   const time = new Date()
   time.setDate(time.getDate() + buf)
   const timeStr = time.toLocaleDateString()
-  const weekday = _getWeekday(time)
+  const weekday = getWeekday(time)
   return { timeStr, weekday }
 }
 
-function _checkInPast(ms) {
-  const t = new Date()
-  return ms < t.getTime()
+export function cancelCourse(uid) {
+  const dispatch = store.dispatch
+  let c = {}
+  coursesRef.child(uid).transaction(
+    function (course) {
+      // set cancelled
+      if (!course.cancelled) course.cancelled = true
+      else course.cancelled = false
+      // set course var checker
+      c = Object.assign({}, course, { uid: uid, reservations: course.reservations })
+      // set course reservations as null
+      course.reservations = null
+      // push course
+      return course
+    }
+  )
+    .then(() => {
+      if (c.cancelled) {
+        if (!checkInPast(c.end)) {
+          let { reservations } = c
+          for (let userId in reservations) {
+            if (reservations.hasOwnProperty(userId)) {
+              _incrementUserCapacity(userId, c.start)
+            }
+          }
+        }
+        setSnackbar({ message: 'Tunti peruttu' }, dispatch)
+      } else {
+        setSnackbar({ message: 'Tunti vapautettu' }, dispatch)
+      }
+    })
+    .catch(err => {
+      console.error(err)
+      setSnackbar({ message: 'Tehtävä epäonnistui' }, dispatch)
+    })
 }
 
-function _checkStarting(ms) {
-  const t = new Date()
-  t.setHours(t.getHours() + 3)
-  return ms < t.getTime()
-}
-
-function _getWeekday(time) {
-  const day = time.getDay()
-  switch (day) {
-    case 0: return 'Sunnuntai'
-    case 1: return 'Maanantai'
-    case 2: return 'Tiistai'
-    case 3: return 'Keskiviikko'
-    case 4: return 'Torstai'
-    case 5: return 'Perjantai'
-    case 6: return 'Lauantai'
-    default: return '?'
-  }
-}
-
-function _getStart() {
-  const time = new Date()
-
-  // set time to 00:00:00:000
-  time.setMilliseconds(0)
-  time.setSeconds(0)
-  time.setMinutes(0)
-  time.setHours(0)
-
-  return time.getTime()
-}
-
-function _getEnd() {
-  const time = new Date()
-
-  // add 12 days to filter
-  time.setDate(time.getDate() + 11)
-
-  // set time to 23:59:59:999
-  time.setMilliseconds(999)
-  time.setSeconds(59)
-  time.setMinutes(59)
-  time.setHours(23)
-
-  return time.getTime()
+export function removeCourse(uid) {
+  const dispatch = store.dispatch
+  let c = {}
+  coursesRef.child(uid).transaction(
+    function (course) {
+      // set course var checker
+      c = Object.assign({}, course)
+      // push course
+      return null
+    }
+  )
+    .then(() => {
+      if (!checkInPast(c.end)) {
+        let { reservations } = c
+        for (let userId in reservations) {
+          if (reservations.hasOwnProperty(userId)) {
+            _incrementUserCapacity(userId, c.start)
+          }
+        }
+      }
+      setSnackbar({ message: 'Tunti poistettu' }, dispatch)
+    })
+    .catch(err => {
+      console.error(err)
+      setSnackbar({ message: 'Poisto epäonnistui' }, dispatch)
+    })
 }
