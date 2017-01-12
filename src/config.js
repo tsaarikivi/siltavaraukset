@@ -1,7 +1,7 @@
 function _getServerUrl() {
   if (process.env.NODE_ENV === "production") {
     console.log('using production servers')
-    return 'http://localhost:3001'
+    return 'https://siltavaraukset.herokuapp.com'
   } else {
     console.log('using development servers')
     return 'http://localhost:3001'

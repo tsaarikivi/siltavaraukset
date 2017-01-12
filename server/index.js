@@ -10,6 +10,14 @@ var cancelCourse = require('./email/cancelcourse')
 // create restify server
 var server = restify.createServer()
 
+var port = process.env.PORT || 3001
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  next()
+})
+
 // server middleware
 server.use(restify.acceptParser(server.acceptable))
 server.use(restify.authorizationParser())
@@ -47,6 +55,6 @@ server.post('/makereservation', makeReservation)
 server.post('/cancelcourse', cancelCourse)
 
 // ship to localhost 3001
-server.listen(3001, function () {
+server.listen(port, function () {
   console.log('%s listening at %s', server.name, server.url)
 })
