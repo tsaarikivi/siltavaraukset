@@ -43,7 +43,7 @@ server.use(restify.throttle({
 server.use(restify.conditionalRequest())
 
 // routes
-server.post('/makereservation/:email', makeReservation)
+server.post('/makereservation', makeReservation)
 server.post('/cancelcourse', cancelCourse)
 
 // ship to localhost 3001

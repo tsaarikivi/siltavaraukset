@@ -1,4 +1,7 @@
 import { coursesRef, usersRef } from '../firebase'
+import axios from 'axios'
+
+import { SERVERURL } from '../config'
 
 import { setSnackbar } from './snackbar'
 import { store } from '../index.js'
@@ -40,7 +43,8 @@ export function createCourse({title, desc, teacher, startTime, endTime, date, ma
     })
 }
 
-export function makeReservation({course: { uid, maxCapacity, start }, user}) {
+export function makeReservation({course, user}) {
+  const { uid, maxCapacity, start } = course
   const dispatch = store.dispatch
   coursesRef.child(uid).child('reservations').transaction(
     function (reservations) {
@@ -54,6 +58,7 @@ export function makeReservation({course: { uid, maxCapacity, start }, user}) {
           if (!reservations[user.uid]) {
             reservations[user.uid] = user.email
             setSnackbar({ message: 'Paikka varattu' }, dispatch)
+            _sendMakeReservationEmail(course, user)
             _reduceUserCapacity(user.uid, start)
           } else {
             setSnackbar({ message: 'Sinulle on jo varattu paikka' }, dispatch)
@@ -67,6 +72,17 @@ export function makeReservation({course: { uid, maxCapacity, start }, user}) {
       return reservations
     }
   )
+    .catch(err => console.error(err))
+}
+
+function _sendMakeReservationEmail(course, user) {
+  const data = {
+    courseDate: getLocaleDateStr(course.start),
+    courseTime: course.time,
+    courseTitle: course.title,
+    email: user.email
+  }
+  axios.post(SERVERURL + '/makereservation', data)
     .catch(err => console.error(err))
 }
 
@@ -232,6 +248,7 @@ export function cancelCourse(uid) {
           }
         }
         setSnackbar({ message: 'Tunti peruttu' }, dispatch)
+        _sendCancelCourseEmail(c)
       } else {
         setSnackbar({ message: 'Tunti vapautettu' }, dispatch)
       }
@@ -240,6 +257,30 @@ export function cancelCourse(uid) {
       console.error(err)
       setSnackbar({ message: 'Tehtävä epäonnistui' }, dispatch)
     })
+}
+
+function _sendCancelCourseEmail(course) {
+  const date = getLocaleDateStr(course.start)
+  const email = _craftEmailArray(course.reservations)
+  console.log(email)
+  const data = {
+    courseDate: date,
+    courseTime: course.time,
+    courseTitle: course.title,
+    email: email
+  }
+  axios.post(SERVERURL + '/cancelcourse', data)
+    .catch(err => console.error(err))
+}
+
+function _craftEmailArray(reservations) {
+  const ret = []
+  for (let key in reservations) {
+    if (reservations.hasOwnProperty(key)) {
+      ret.push(reservations[key])
+    }
+  }
+  return ret
 }
 
 export function removeCourse(uid) {
