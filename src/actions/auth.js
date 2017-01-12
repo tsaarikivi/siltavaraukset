@@ -96,9 +96,11 @@ export function signIn({email, password}) {
     })
     // if user not found register it
     .catch(err => {
-      console.error(err)
       if (err.code === 'auth/user-not-found') {
+        console.log('registering new user')
         register({ email, password })
+      } else {
+        console.error(err)
       }
     })
 }

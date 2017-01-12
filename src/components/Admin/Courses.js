@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
 import Subheader from 'material-ui/Subheader'
+import CircularProgress from 'material-ui/CircularProgress'
 
 import Course from './Course'
 
@@ -78,7 +79,9 @@ class Courses extends Component {
         }
       }
     }
-
+    if (ret.length === 0) {
+      return <div className="loading" ><CircularProgress /></div>
+    }
     return ret
   }
 

@@ -7,6 +7,7 @@ import { fetchUsers, usersRefOff } from '../../actions/users'
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
 import Subheader from 'material-ui/Subheader'
+import CircularProgress from 'material-ui/CircularProgress'
 
 import User from './User'
 
@@ -62,6 +63,10 @@ class Users extends Component {
           ret.push(<User key={u.uid} user={u} />)
         }
       }
+    }
+
+    if (ret.length === 0) {
+      return <div className="loading" ><CircularProgress /></div>
     }
 
     return ret

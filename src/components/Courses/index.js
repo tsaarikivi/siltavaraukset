@@ -7,6 +7,7 @@ import Subheader from 'material-ui/Subheader'
 import Paper from 'material-ui/Paper'
 import { List } from 'material-ui/List'
 import Course from './Course'
+import CircularProgress from 'material-ui/CircularProgress'
 
 import { fetchCourseData, coursesRefOff, getUserMin, getUserMax } from '../../actions/courses'
 
@@ -78,6 +79,7 @@ class Courses extends Component {
 
   renderCourses() {
     const { courses } = this.props
+
     let ret = []
     for (let day in courses) {
       if (courses.hasOwnProperty(day)) {
@@ -90,6 +92,9 @@ class Courses extends Component {
           </Paper>
         )
       }
+    }
+    if (ret.length === 0) {
+      return <div className="loading" ><CircularProgress /></div>
     }
     return ret
   }
