@@ -76,8 +76,9 @@ export function makeReservation({course, user}) {
 }
 
 function _sendMakeReservationEmail(course, user) {
+  const date = getLocaleDateStr(course.start)
   const data = {
-    courseDate: getLocaleDateStr(course.start),
+    courseDate: date,
     courseTime: course.time,
     courseTitle: course.title,
     email: user.email
@@ -262,7 +263,6 @@ export function cancelCourse(uid) {
 function _sendCancelCourseEmail(course) {
   const date = getLocaleDateStr(course.start)
   const email = _craftEmailArray(course.reservations)
-  console.log(email)
   const data = {
     courseDate: date,
     courseTime: course.time,
