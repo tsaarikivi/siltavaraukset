@@ -1,7 +1,11 @@
 import { auth, usersRef } from '../firebase'
 import { browserHistory } from 'react-router'
 
+import { store } from '../index.js'
+
 import { setSnackbar } from './snackbar'
+
+import { getAmtDaysFromMs } from './time'
 
 export const types = {
   FETCH_USER: 'FETCH_USER'
@@ -51,6 +55,8 @@ export function usersRefOff() {
 function _onValueChange(data, dispatch) {
   let user = data.val()
   user.uid = data.key
+  user.timeInDays = getAmtDaysFromMs(user.time)
+  user.expiresInDays = getAmtDaysFromMs(user.expires)
   if (!user.admin) user.admin = false
   dispatch({
     type: types.FETCH_USER,
@@ -100,4 +106,17 @@ export function signIn({email, password}) {
 // signout function
 export function signOut() {
   auth.signOut()
+}
+
+export function forgotPassword(email) {
+  const dispatch = store.dispatch
+  auth.sendPasswordResetEmail(email)
+    .then(() => {
+      browserHistory.push('/')
+      setSnackbar({ message: 'Salasananvaihtolinkki lähetetty' }, dispatch)
+    })
+    .catch(err => {
+      console.error(err)
+      setSnackbar({ message: 'Tarkasta sähköpostiosoite' }, dispatch)
+    })
 }

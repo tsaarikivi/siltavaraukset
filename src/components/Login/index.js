@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { browserHistory } from 'react-router'
 
 import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -62,7 +63,7 @@ export default class Login extends Component {
             <div className="form-buttons">
               <RaisedButton className="form-button" type="submit" label="Kirjaudu / Rekisteröidy" />
               <br />
-              <FlatButton className="form-button" secondary={true} label="Unohditko salasanasi?" />
+              <FlatButton onTouchTap={() => browserHistory.push('/forgotpassword')} className="form-button" secondary={true} label="Unohditko salasanasi?" />
             </div>
           </div>
         </form>

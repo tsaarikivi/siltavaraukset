@@ -30,6 +30,11 @@ export default (
         cb(null, require('./components/User').default)
       }, 'user')
     } } />
+    <Route path="/forgotpassword" getComponent={(location, cb) => {
+      require.ensure([], require => {
+        cb(null, require('./components/ForgotPassword').default)
+      }, 'forgotpassword')
+    } } />
     <Route path="*" getComponent={(location, cb) => {
       require.ensure([], require => {
         cb(null, require('./components/NotFound').default)

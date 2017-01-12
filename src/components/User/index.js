@@ -1,32 +1,30 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import NotFound from '../NotFound'
+
 import Subheader from 'material-ui/Subheader'
 import Paper from 'material-ui/Paper'
 import List, { ListItem } from 'material-ui/List'
-
-import { getAmtDaysFromMs } from '../../actions/time'
 
 class User extends Component {
   render() {
     const { user } = this.props
     if (user) {
-      let { uses, expires, time, email } = user
-      expires = getAmtDaysFromMs(expires)
-      time = getAmtDaysFromMs(time)
+      let { uses, expiresInDays, timeInDays, email } = user
       return <div className="small-container">
         <Subheader className="subheader-centered">Käyttäjätiedot</Subheader>
         <Paper className="form" zDepth={1}>
           <List>
             {this.renderAdmin()}
             <ListItem>Sähköposti: {email}</ListItem>
-            <ListItem>Kertalippuja {uses} (umpeutuu {expires} pv. päästä)</ListItem>
-            <ListItem>Aikaa {time} päivää</ListItem>
+            <ListItem>Kertalippuja {uses} kpl. <span className="info-container">(umpeutuu {expiresInDays} pv. päästä)</span></ListItem>
+            <ListItem>Aikaa {timeInDays} pv.</ListItem>
           </List>
         </Paper>
       </div>
     }
-    return null
+    return <NotFound />
   }
 
   renderAdmin() {

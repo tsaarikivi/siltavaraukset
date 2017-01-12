@@ -9,6 +9,7 @@ import { BottomNavigation, BottomNavigationItem } from 'material-ui/BottomNaviga
 import Users from './Users'
 import Courses from './Courses'
 import CourseForm from './CourseForm'
+import NotFound from '../NotFound'
 
 class Admin extends Component {
   state = {
@@ -22,7 +23,7 @@ class Admin extends Component {
         return this.renderAdmin()
       }
     }
-    return null
+    return <NotFound />
   }
 
   select = (index) => this.setState({ selectedIndex: index })

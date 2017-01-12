@@ -113,9 +113,10 @@ export default class Course extends Component {
     let btn = null
     if (!user) btn = <MenuItem onTouchTap={() => browserHistory.push('/login')} primaryText="Kirjaudu Varataksesi" />
     else if (inPast) btn = null
+    else if (cancelled) btn = null
     else if (reserved && starting) btn = null
     else if (reserved) btn = <MenuItem onTouchTap={() => this.undoReservation()} primaryText="Peruuta Varaus" />
-    else if (starting) btn = <MenuItem onTouchTap={() => this.makeReservation()} primaryText="Varaa (ei peruutusta)" />
+    else if (!full && starting) btn = <MenuItem onTouchTap={() => this.makeReservation()} primaryText="Varaa (ei peruutusta)" />
     else if (!full && !cancelled) btn = <MenuItem onTouchTap={() => this.makeReservation()} primaryText="Varaa" />
     return btn
   }
