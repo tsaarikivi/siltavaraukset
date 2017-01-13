@@ -61,16 +61,6 @@ class Layout extends Component {
       />
   }
 
-  renderDrawer() {
-    return <Drawer
-      docked={false}
-      open={this.state.drawerOpen}
-      onRequestChange={drawerOpen => this.setState({ drawerOpen })}>
-      <AppBar title="Valikko" showMenuIconButton={false} />
-      {this.renderMenu()}
-    </Drawer>
-  }
-
   renderSnackBar() {
     const { message, open } = this.props.snackbar
     return <Snackbar
@@ -79,6 +69,16 @@ class Layout extends Component {
       autoHideDuration={4000}
       onRequestClose={this.handleRequestClose}
       />
+  }
+
+  renderDrawer() {
+    return <Drawer
+      docked={false}
+      open={this.state.drawerOpen}
+      onRequestChange={drawerOpen => this.setState({ drawerOpen })}>
+      <AppBar title="Valikko" showMenuIconButton={false} />
+      {this.renderMenu()}
+    </Drawer>
   }
 
   renderMenu() {
