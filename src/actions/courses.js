@@ -317,7 +317,6 @@ export function cleanUpCourses() {
   coursesRef.orderByChild('start').startAt(start).endAt(end).once('value')
     .then(data => {
       const courses = data.val()
-      console.log(courses)
       for (let key in courses) {
         if (courses.hasOwnProperty(key)) {
           coursesRef.child(key).remove()
