@@ -6,7 +6,6 @@ import { browserHistory } from 'react-router'
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
 import MenuItem from 'material-ui/MenuItem'
-import Menu from 'material-ui/Menu'
 import FontIcon from 'material-ui/FontIcon'
 import Snackbar from 'material-ui/Snackbar'
 
@@ -75,19 +74,20 @@ class Layout extends Component {
     return <Drawer
       docked={false}
       open={this.state.drawerOpen}
-      onRequestChange={drawerOpen => this.setState({ drawerOpen })}>
+      onRequestChange={drawerOpen => this.setState({ drawerOpen })}
+      disableSwipeToOpen={true}>
       <AppBar title="Valikko" showMenuIconButton={false} />
       {this.renderMenu()}
     </Drawer>
   }
 
   renderMenu() {
-    return <Menu>
+    return <div>
       {this.renderAdmin()}
       <MenuItem primaryText="Aikataulu" onTouchTap={() => this.handleMenuClick('/')} leftIcon={<FontIcon className="material-icons">assignment</FontIcon>}></MenuItem>
       <MenuItem primaryText="Kauppa" onTouchTap={() => this.handleRedirect('https://holvi.com/shop/4Z4CW4/')} leftIcon={<FontIcon className="material-icons">shopping_cart</FontIcon>}></MenuItem>
       <MenuItem primaryText="Yhteystiedot" onTouchTap={() => this.handleMenuClick('/feedback')} leftIcon={<FontIcon className="material-icons">feedback</FontIcon>}></MenuItem>
-    </Menu>
+    </div>
   }
 
   renderAdmin() {

@@ -52,7 +52,7 @@ export function incrementExpires(uid) {
     function (expires) {
       const t = getStart()
       if (expires < t) expires = t
-      else expires += 86400000
+      expires += 86400000
       return expires
     }
   )
@@ -63,7 +63,7 @@ export function incrementTime(uid) {
     function (time) {
       const t = getStart()
       if (time < t) time = t
-      else time += 86400000
+      time += 86400000
       return time
     }
   )
