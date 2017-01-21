@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
 import Subheader from 'material-ui/Subheader'
-import CircularProgress from 'material-ui/CircularProgress'
 
 import Course from './Course'
 

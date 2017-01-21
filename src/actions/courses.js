@@ -319,7 +319,9 @@ export function cleanUpCourses() {
       const courses = data.val()
       console.log(courses)
       for (let key in courses) {
-        coursesRef.child(key).remove()
+        if (courses.hasOwnProperty(key)) {
+          coursesRef.child(key).remove()
+        }
       }
     })
     .catch(err => {
