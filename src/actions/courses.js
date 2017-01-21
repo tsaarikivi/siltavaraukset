@@ -310,3 +310,19 @@ export function removeCourse(uid) {
       setSnackbar({ message: 'Poisto epäonnistui' }, dispatch)
     })
 }
+
+export function cleanUpCourses() {
+  const start = 0
+  const end = getEnd(-50)
+  coursesRef.orderByChild('start').startAt(start).endAt(end).once('value')
+    .then(data => {
+      const courses = data.val()
+      console.log(courses)
+      for (let key in courses) {
+        coursesRef.child(key).remove()
+      }
+    })
+    .catch(err => {
+      console.error(err)
+    })
+}

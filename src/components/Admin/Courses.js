@@ -9,7 +9,7 @@ import CircularProgress from 'material-ui/CircularProgress'
 
 import Course from './Course'
 
-import { fetchCourseData, coursesRefOff, getAdminMin, getAdminMax } from '../../actions/courses'
+import { fetchCourseData, coursesRefOff, getAdminMin, getAdminMax, cleanUpCourses } from '../../actions/courses'
 
 class Courses extends Component {
   state = {
@@ -18,6 +18,7 @@ class Courses extends Component {
 
   componentDidMount() {
     this.props.actions.fetchCourseData(getAdminMin, getAdminMax)
+    cleanUpCourses()
   }
 
   /*
@@ -59,6 +60,7 @@ class Courses extends Component {
     const { search } = this.state
 
     const { courses } = this.props
+
     let ret = []
 
     // set users items who include search word
@@ -80,7 +82,7 @@ class Courses extends Component {
       }
     }
     if (ret.length === 0) {
-      return <div className="loading" ><CircularProgress /></div>
+      return <div className="loading" >Ei hallittavia tunteja</div>
     }
     return ret
   }
