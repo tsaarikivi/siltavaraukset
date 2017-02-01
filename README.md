@@ -18,6 +18,7 @@ operating since 2017
 - [Testing and tests](#testing-and-tests)
 - [React best practices](#react-best-practices)
 - [Redux best practices](#redux-best-practices)
+- [Using firebase](#using-firebase)
 
 ## Installation
 1. Make sure you have node.js installed (hopefully through nvm) <br>
@@ -58,6 +59,9 @@ Tests are written in `FILENAME.test.js` style in `/src/tests` folder <br>
 - Write components in `/src/components` folder and make a folder for each own large scale component. Name the folder / Component Uppercase
 - Write as small components as possible. And even smaller
 - Think reusable when creating component
+
+### Localization
+
 - Localization is done via redux. If the component in making has any localizable text, use class notation and connect to redux store[locale]. Then make according localizations to `/src/locales/en.js` and use it
 
 ```js
@@ -91,6 +95,8 @@ function mapStateToProps({locale}) {
 export default connect(mapStateToProps, null)(LocalizableComponentme)
 ```
 
+### Fat arrow functions
+
 - Use es6 fat-arrow-notation if component has no state or lifecycle, nor does it have to be connected to redux state
 
 ```js
@@ -111,11 +117,13 @@ export default FatComponent
 
 > See more @ [medium](https://medium.com/@kylpo/redux-best-practices-eef55a20cc72#.h4wh45o6a)
 
-- Use syntax
+### syntax
 
 `action name: <NOUN>_<VERB>` <br>
 `action creator name: <verb><Noun>` <br>
-`selector name: get<Noun>`
+`selector name: get<Noun>` <br>
+
+Example reducer
 
 ```js
 import { createAction, handleActions } from 'redux-actions';
@@ -139,6 +147,8 @@ export default handleActions({
 // Selectors
 export const getTodos = (state) => state.todos
 ```
+
+### Filtering redux state
 
 - Use [reselect](https://github.com/reactjs/reselect) to filter state. Use it even if you get the whole state
 
@@ -178,4 +188,43 @@ let exampleState = {
 console.log(subtotalSelector(exampleState)) // 2.15
 console.log(taxSelector(exampleState))      // 0.172
 console.log(totalSelector(exampleState))    // { total: 2.322 }
+```
+
+## Using firebase
+### Database
+
+> Check [API](https://firebase.google.com/docs/database/web/read-and-write)
+
+- Make refs in `/src/firebase/index.js`
+- Use only refs exported there
+
+```js
+// ...
+// ...
+// /src/firebase/index.js
+export const usersRef = fb.ref('users')
+```
+
+```js
+// Then
+import { usersRef } from '/src/firebase/index.js'
+usersRef.once('value')
+  .then(data => {
+    console.log(data.val())
+  })
+  .catch(err => {
+    console.error(err)
+  })
+```
+
+### Auth
+
+> Check [API](https://firebase.google.com/docs/auth/web/manage-users)
+
+- Use `import { auth } from '/src/firebase/index.js'`
+
+```js
+// Then
+import { auth } from '/src/firebase/index.js'
+auth.signOut()
 ```
