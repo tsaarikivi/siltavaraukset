@@ -35,13 +35,13 @@ operating since 2017
 - Write documentation and comments to someone who does not know anything
 - Split code. Make small functions and separate them to their respective folders and files
 - Recheck code before merge request. Check it on git diff (use visual studio code)
-- Performance is key. Always. Write as much async code as you can. Sync pulls main thread. Very bad.
+- Performance is key. Always. Write as much async code as you can. Sync pulls main thread. Very bad
 
 ## Architecture
 We use [React](https://facebook.github.io/react/) and [Redux](http://redux.js.org/) in the application layer and [Google Firebase](https://firebase.google.com/) as BaaS <br>
 On the backend we use CRUD email / payment server hosted on heroku <br>
 Also using firebase ElasticSearch library [flashlight](https://github.com/firebase/flashlight) and Worker / Job utiliser [firebase-queue](https://github.com/firebase/firebase-queue) <br>
-[Progressive web apps](https://medium.com/@addyosmani/progressive-web-apps-with-react-js-part-i-introduction-50679aef2b12#.moy0zskpd) is the way.
+[Progressive web apps](https://medium.com/@addyosmani/progressive-web-apps-with-react-js-part-i-introduction-50679aef2b12#.moy0zskpd) is the way
 
 ## Testing and tests
 We use [Jest](https://facebook.github.io/jest/) as testing framework <br>
@@ -124,7 +124,7 @@ export default FatComponent
 `action creator name: <verb><Noun>` <br>
 `selector name: get<Noun>` <br>
 
-Example reducer
+Example reducer:
 
 ```js
 import { createAction, handleActions } from 'redux-actions';
@@ -246,7 +246,7 @@ auth.signOut()
 
 ### Database rules
 Found in `/database.rules.json`
-- Make sure to test database rules, so they are secure. They are testable on the firebase project console website.
+- Make sure to test database rules, so they are secure. They are testable on the firebase project console website. [staging](https://console.firebase.google.com/project/slush-stage/database/rules) & [production](https://console.firebase.google.com/project/slush-production/database/rules)
 
 #### Deploy database rules
 - To production: `npm run deploy:db:production`
