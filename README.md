@@ -14,11 +14,14 @@ operating since 2017
 - [Way of Code](#way-of-code)
 - [Installation](#installation)
 - [Architecture](#architecture)
-- [Deploying to firebase](#deploying-to-firebase)
 - [Testing and tests](#testing-and-tests)
+- [Web benchmarks](#web-benchmarks)
 - [React best practices](#react-best-practices)
 - [Redux best practices](#redux-best-practices)
+- [Router](#router)
+- [Styling](#styling)
 - [Using firebase](#using-firebase)
+- [Deploying to firebase](#deploying-to-firebase)
 
 ## Installation
 1. Make sure you have node.js installed (hopefully through nvm) <br>
@@ -32,28 +35,25 @@ operating since 2017
 - Write documentation and comments to someone who does not know anything
 - Split code. Make small functions and separate them to their respective folders and files
 - Recheck code before merge request. Check it on git diff (use visual studio code)
+- Performance is key. Always. Write as much async code as you can. Sync pulls main thread. Very bad.
 
 ## Architecture
 We use [React](https://facebook.github.io/react/) and [Redux](http://redux.js.org/) in the application layer and [Google Firebase](https://firebase.google.com/) as BaaS <br>
 On the backend we use CRUD email / payment server hosted on heroku <br>
-Also using firebase ElasticSearch library [flashlight](https://github.com/firebase/flashlight) and Worker / Job utiliser [firebase-queue](https://github.com/firebase/firebase-queue)
-
-## Deploying to firebase
-### Deploying to staging
-`npm run deploy:stage` <br>
-This deploys the current saved state to [staging site](https://slush-stage.firebaseapp.com/)
-### Deploying to production
-Please don't try this at home! <br>
-`npm run deploy:production` <br>
-This deploys the current saved state to [production site](https://slush-production.firebaseapp.com/)
+Also using firebase ElasticSearch library [flashlight](https://github.com/firebase/flashlight) and Worker / Job utiliser [firebase-queue](https://github.com/firebase/firebase-queue) <br>
+[Progressive web apps](https://medium.com/@addyosmani/progressive-web-apps-with-react-js-part-i-introduction-50679aef2b12#.moy0zskpd) is the way.
 
 ## Testing and tests
-We use [Jest](https://facebook.github.io/jest/) as testing framework
-### running tests
+We use [Jest](https://facebook.github.io/jest/) as testing framework <br>
+Please write unit tests on data handling
+### Running tests
 `npm test` <br>
 This runs tests in watching mode <br>
 Tests are written in `FILENAME.test.js` style in `/src/tests` folder <br>
 > See more on [cra](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md#running-tests)
+
+## Web benchmarks
+- Try [lighthouse](https://chrome.google.com/webstore/detail/lighthouse/blipmdconlkpinefehnmjammfjpmpbjk)
 
 ## React best practices
 - Write components in `/src/components` folder and make a folder for each own large scale component. Name the folder / Component Uppercase
@@ -114,6 +114,7 @@ export default FatComponent
 ## Redux best practices
 - Write reducers in `/src/reducers` in their respective files
 - Use [redux-actions](https://github.com/acdlite/redux-actions) to create and handle actions
+- Dont bloat reducers. Write all helper functions in `/src/helpers` in their respective files
 
 > See more @ [medium](https://medium.com/@kylpo/redux-best-practices-eef55a20cc72#.h4wh45o6a)
 
@@ -190,6 +191,14 @@ console.log(taxSelector(exampleState))      // 0.172
 console.log(totalSelector(exampleState))    // { total: 2.322 }
 ```
 
+## Router
+- Lazy load all routes. Check current router.
+
+## Styling
+- Feel free to use [material design components](http://www.material-ui.com/#/components/raised-button)
+- Try to write javascript export styles
+- If css needed write small css files and for each component its own. Lazy loading breaks css if not in scope.
+
 ## Using firebase
 ### Database
 
@@ -206,15 +215,21 @@ export const usersRef = fb.ref('users')
 ```
 
 ```js
-// Then
+// Then in a reducer ACTION
+import { createAction } from 'redux-actions'
+const setUser = createAction('USER_SET')
+
 import { usersRef } from '/src/firebase/index.js'
-usersRef.once('value')
-  .then(data => {
-    console.log(data.val())
-  })
-  .catch(err => {
-    console.error(err)
-  })
+export const getUser = (key) => {
+  return dispatch => {
+    usersRef.child(key).once('value')
+      .then(data => {
+        // dispatch action with data as payload
+        dispatch(setUser(data.val()))
+      })
+      .catch(err => console.error(err))
+  }
+}
 ```
 
 ### Auth
@@ -228,3 +243,20 @@ usersRef.once('value')
 import { auth } from '/src/firebase/index.js'
 auth.signOut()
 ```
+
+### Database rules
+Found in `/database.rules.json`
+- Make sure to test database rules, so they are secure. They are testable on the firebase project console website.
+
+#### Deploy database rules
+- To production: `npm run deploy:db:production`
+- To staging: `npm run deploy:db:stage`
+
+## Deploying to firebase
+### Deploying to staging
+`npm run deploy:stage` <br>
+This deploys the current saved state to [staging site](https://slush-stage.firebaseapp.com/)
+### Deploying to production
+Please don't try this at home! <br>
+`npm run deploy:production` <br>
+This deploys the current saved state to [production site](https://slush-production.firebaseapp.com/)
