@@ -26,10 +26,10 @@ operating since 2017
 4. `npm start`
 
 ## Way of Code
-- Lets not put ourselves in technical debt. Write documentation and comment your code as you write it.
-- Clean up your code as you write it. Your code is my code and vice versa.
-- Write documentation and comments to someone who does not know anything.
-- Split code. Make small functions and separate them to their respective folders and files.
+- Lets not put ourselves in technical debt. Write documentation and comment your code as you write it
+- Clean up your code as you write it. Your code is my code and vice versa
+- Write documentation and comments to someone who does not know anything
+- Split code. Make small functions and separate them to their respective folders and files
 - Recheck code before merge request. Check it on git diff (use visual studio code)
 
 ## Architecture
@@ -55,8 +55,10 @@ Tests are written in `FILENAME.test.js` style in `/src/tests` folder <br>
 > See more on [cra](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md#running-tests)
 
 ## React best practices
-Write components in `/src/components` folder and make a folder for each own large scale component. Name the folder / Component Uppercase. <br>
-Localization is done via redux. If the component in making has any localizable text, use class notation and connect to redux store[locale]. Then make according localizations to `/src/locales/en.js` and use it.
+- Write components in `/src/components` folder and make a folder for each own large scale component. Name the folder / Component Uppercase
+- Write as small components as possible. And even smaller
+- Think reusable when creating component
+- Localization is done via redux. If the component in making has any localizable text, use class notation and connect to redux store[locale]. Then make according localizations to `/src/locales/en.js` and use it
 
 ```js
 /*
@@ -86,10 +88,10 @@ function mapStateToProps({locale}) {
   return { locale }
 }
 
-export default connect(mapStateToProps, null)(HoLocalizableComponentme)
+export default connect(mapStateToProps, null)(LocalizableComponentme)
 ```
 
-Use es6 fat-arrow-notation if component has no state or lifecycle, nor does it have to be connected to redux state.
+- Use es6 fat-arrow-notation if component has no state or lifecycle, nor does it have to be connected to redux state
 
 ```js
 import React from 'react'
@@ -104,12 +106,12 @@ export default FatComponent
 ```
 
 ## Redux best practices
-Write reducers in `/src/reducers` <br>
-Use [redux-actions](https://github.com/acdlite/redux-actions) to create and handle actions
+- Write reducers in `/src/reducers` in their respective files
+- Use [redux-actions](https://github.com/acdlite/redux-actions) to create and handle actions
 
 > See more @ [medium](https://medium.com/@kylpo/redux-best-practices-eef55a20cc72#.h4wh45o6a)
 
-Use syntax <br>
+- Use syntax
 
 `action name: <NOUN>_<VERB>` <br>
 `action creator name: <verb><Noun>` <br>
@@ -138,8 +140,7 @@ export default handleActions({
 export const getTodos = (state) => state.todos
 ```
 
-Use [reselect](https://github.com/reactjs/reselect) to filter state <br>
-Use it even if you get the whole state.
+- Use [reselect](https://github.com/reactjs/reselect) to filter state. Use it even if you get the whole state
 
 ```js
 import { createSelector } from 'reselect'
